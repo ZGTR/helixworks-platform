@@ -1,0 +1,38 @@
+name: helixworks
+
+services:
+  postgres:
+    image: postgres:17.6-alpine
+    environment:
+      POSTGRES_USER: helixworks
+      POSTGRES_PASSWORD: local-only-password
+      POSTGRES_DB: helixworks
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres-init.sql:/docker-entrypoint-initdb.d/001-init.sql:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U helixworks -d helixworks']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  localstack:
+    image: localstack/localstack:4.14.0
+    environment:
+      SERVICES: events,sqs,s3,secretsmanager,kms
+      AWS_DEFAULT_REGION: eu-west-2
+    ports:
+      - '4566:4566'
+    volumes:
+      - localstack-data:/var/lib/localstack
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -fsS http://localhost:4566/_localstack/health']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  postgres-data:
+  localstack-data:
