@@ -1,0 +1,14 @@
+node_modules/
+.turbo/
+dist/
+.next/
+coverage/
+.env
+.env.*
+!.env.example
+*.tfstate
+*.tfstate.*
+.terraform/
+*.tfplan
+*.tsbuildinfo
+artifacts/
